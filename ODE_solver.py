@@ -153,35 +153,99 @@ def main():
     with inital conditions; x(0) = 1 
     solving for t = 0 till t = 1
     """
-    f = ODE_functions.f
-    fTrue = ODE_functions.fAnalytical
+    # f = ODE_functions.f
+    # fTrue = ODE_functions.fAnalytical
     tspan = np.linspace(0, 1, 100) 
     
-    eulerSol = solveODE(f, 1, tspan, 'euler', 0.01, False)
-    rk4Sol = solveODE(f, 1, tspan, 'rk4', 0.01, False)
-    trueSol = fTrue(tspan)
- 
+    # eulerSol = solveODE(f, 1, tspan, 'euler', 0.01, False)
+    # rk4Sol = solveODE(f, 1, tspan, 'rk4', 0.01, False)
+    # exactSol = fTrue(tspan)
+    
+    # rk4Error = [np.abs(exactSol[i] - rk4Sol[i]) for i in range(len(exactSol))]
+    # eulerError = [np.abs(exactSol[i] - eulerSol[i]) for i in range(len(exactSol))]
+    
+    # plt.figure()
+    # f, axes = plt.subplots(1, 2)
+    # f.suptitle("Plots for 1st order ODE x' = x", fontsize=16)
+    # axes[0].plot(tspan,eulerSol,label='euler', marker='x', markersize=3)
+    # axes[0].plot(tspan,rk4Sol,label='rk4', marker='s', markersize=3)
+    # axes[0].plot(tspan,exactSol,label='exact', marker='o', markersize=3)
+    # axes[0].set_ylabel('dx/dt')
+    # axes[0].set_xlabel('Time')
+    # axes[0].legend()
+    
+    
+    # axes[1].loglog(tspan, eulerError, label = "euler error")
+    # axes[1].loglog(tspan, rk4Error, label = "rk4 error")
+    # axes[1].set_ylabel('Error')
+    # axes[1].set_xlabel('Time')
+    # axes[1].legend()
+    
 
     
-    rk4Error = [np.abs(trueSol[i] - rk4Sol[i]) for i in range(len(trueSol))]
-    eulerError = [np.abs(trueSol[i] - eulerSol[i]) for i in range(len(trueSol))]
-  
+    """
+    Example for solutions to the 2nd order ODE,
+    x'' = -x which is equivalent too,
+    x' = y, y' = -x
+    solving for t = 0 to 1
+    """
+    
+    g = ODE_functions.g
+    gTrue = ODE_functions.gAnalytical
+    
+    eulerSolxy = solveODE(g, [1,1], tspan, 'euler', 0.01, True)
+    eulerSolx = eulerSolxy[:,0]
+    eulerSoly = eulerSolxy[:,1]
+
+    rk4Solxy = solveODE(g, [1,1], tspan, 'rk4', 0.01, True)
+    rk4Solx = rk4Solxy[:,0]
+    rk4Soly = rk4Solxy[:,1]
+    
+    exactSolx , exactSoly = gTrue(tspan)
+
+    # rk4Error = [np.abs(trueSol[i] - rk4Sol[i]) for i in range(len(trueSol))]
+    # eulerError = [np.abs(trueSol[i] - eulerSol[i]) for i in range(len(trueSol))]
     
     
-    plt.loglog(tspan, eulerError, label='Euler', marker='x', markersize=10)
-    plt.loglog(tspan, rk4Error, label='RK4', marker='o',  markersize=3)
-    # plt.loglog(tspan, trueSol, label='True')
-    plt.legend()
-    plt.xlabel('t')
-    plt.ylabel('x')
+    plt.figure()
+    f, axes = plt.subplots(2, 2)
+    f.suptitle("Plots for 2nd order ODE x'' = -x ", fontsize=16)
+    axes[0,0].plot(tspan,eulerSolx,label='euler', marker='x', markersize=3,linestyle = 'None')
+    axes[0,0].plot(tspan,rk4Solx,label='rk4', marker='o', markersize=3,linestyle = 'None')
+    axes[0,0].plot(tspan,exactSolx,label='exact')
+    axes[0,0].set_ylabel('x')
+    axes[0,0].set_xlabel('Time')
+    axes[0,0].legend()
     
-    # # print(eulerSol)
-    # plt.plot(tspan, eulerTrue)
-    # plt.xlabel('Time')
-    # plt.ylabel('Error')
-    # plt.title('Error between exact and numerical solutions')
-    # plt.show()
-        
+    
+    axes[0,1].plot(tspan,eulerSoly,label='euler', marker='x', markersize=5,linestyle = 'None')
+    axes[0,1].plot(tspan,rk4Soly,label='rk4', marker='o', markersize=3,linestyle = 'None')
+    axes[0,1].plot(tspan,exactSoly,label='exact')
+    axes[0,1].set_ylabel('y(dx/dt)')
+    axes[0,1].set_xlabel('Time')
+    axes[0,1].legend()
+    
+    eulerErrorx = abs(eulerSolx-exactSolx)
+    rk4Errorx = abs(rk4Solx-exactSolx)
+    eulerErrory = abs(eulerSoly - exactSoly)
+    rk4Errory = abs(rk4Soly- exactSoly)
+    
+      
+    axes[1,0].loglog(tspan, eulerErrorx, label = "euler x error")
+    axes[1,0].loglog(tspan, rk4Errorx, label = "rk4 x error")
+    axes[1,0].set_ylabel('x Error')
+    axes[1,0].set_xlabel('Time')
+    axes[1,0].legend()
+    
+         
+    axes[1,1].loglog(tspan, eulerErrory, label = "euler y error")
+    axes[1,1].loglog(tspan, rk4Errory, label = "rk4 y error")
+    axes[1,1].set_ylabel('y Error')
+    axes[1,1].set_xlabel('Time')
+    axes[1,1].legend()
+    
+    
+
 
 if __name__ == '__main__':
     main()
