@@ -8,22 +8,8 @@ import numpy as np
 
 
 def f(x,t):
-    # Function for ODE eqiuation dx/dt=x
-    
+    """Function for ODE eqiuation dx/dt=x
     """
-    Simulates the ODE x' = x
-    
-    Parameters
-    ----------
-    t  : float
-         Time
-    x  : array
-         x-value at time t
-    Returns
-    -------
-    x : ODE value
-    """
-        
     return x
 
 def fAnalytical(t):
@@ -36,31 +22,29 @@ def g(V,t):
     Function for 2nd order ODE x'' = -x,
     reduced to a system of 1st order equations equivalent to,
     dx/dt = y , dy/dt = -x
-    
-    Parameters
-    ----------
-    V  : array
-         Contains x and y value at given t
-    t  : Float
-         Time
-         
-    Returns
-    -------
-    V : ODE values for dy/dt, dx/dt
-    
     """
+    
     x = V[0]
     y = V[1]
     xDash = y
     yDash = -x
     V = np.array([xDash, yDash])
-    
     return V
 
 def gAnalytical(t):
     x = np.sin(t) + np.cos(t)
     y = np.cos(t) - np.sin(t)
     V = np.array([x,y])
+    return V
+
+
+def predatorPrey(V,t,*args):
+    args = args[0]
+    a,b,d = args[0],args[1],args[2]
+    x,y = V[0], V[1]
+    xdash = x*(1-x) - (a*x*y)/(d+x)
+    ydash = b*y*(1-(y/x))
+    V = np.array([xdash,ydash])
     return V
 
 

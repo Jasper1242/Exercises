@@ -12,7 +12,7 @@ import ODE_functions
 
 
 
-def eulerStep(f, x0, t0, h):
+def eulerStep(f, x0, t0, h, *args):
     """ 
     Function implements a euler step for (t0 + h)
     
@@ -28,17 +28,14 @@ def eulerStep(f, x0, t0, h):
          Step size
     Returns
     -------
-    [xN, tN] : Array values for new step h
-     
+    [xN, tN] : Array values for new step h  
     """
-    
     dxdt = f(x0, t0)
     xN = x0 + h * dxdt
     tN = t0 + h
     return xN, tN
 
-def rk4Step(f, x0, t0, h):
-    
+def rk4Step(f, x0, t0, h, *args):
     """ 
     Performs Runge-Kutta Four step for (t0 + h)
     Parameters
@@ -53,13 +50,13 @@ def rk4Step(f, x0, t0, h):
           Step size
     Returns
     -------
-    [xN, tN] : Array of values for new step h
-     
+    [xN, tN] : Array of values for new step h  
     """  
-    k1 = np.array(f(x0, t0))
-    k2 = np.array(f(x0 + h * (k1/2), t0 + (h/2)))
-    k3 = np.array(f(x0 + h * (k2/2), t0 + (h/2)))
-    k4 = np.array(f(x0 + h * k3, t0 + h))
+
+    k1 = np.array(f(x0, t0, *args))
+    k2 = np.array(f(x0 + h * (k1/2), t0 + (h/2), *args))
+    k3 = np.array(f(x0 + h * (k2/2), t0 + (h/2), *args))
+    k4 = np.array(f(x0 + h * k3, t0 + h, *args))
     
     xN = x0 + ((k1 + 2*k2 + 2*k3 + k4)/6) * h
     tN = t0 + h
@@ -67,14 +64,13 @@ def rk4Step(f, x0, t0, h):
     return xN, tN
 
 
-def solveTo(f, T, x0, h, method):
+def solveTo(f, T, x0, h, method, *args):
+
     
     """
     Solve ode using given method between range of T
-    
     Parameters
     ----------
-   
     'T' :   Array
             Contains two values t0, the intial value time and
             tend, the final of time
@@ -86,10 +82,9 @@ def solveTo(f, T, x0, h, method):
                   Maximum step size
     'method' : String
                Describes which solver is to be used
-               
     Returns
     -------
-   
+    xN : Array of Values for x or x and y
     """
 
     methods = {'euler':eulerStep, 'rk4':rk4Step}
@@ -102,37 +97,44 @@ def solveTo(f, T, x0, h, method):
     xN = x0
     solArray = []
     while (tN + h) < tend:
-        xN, tN = solver(f, xN, tN, h)
+        xN, tN = solver(f, xN, tN, h, *args)
         solArray.append(xN)
     else:
-        xN, tN = solver(f, xN, tN, tend - tN)
+        xN, tN = solver(f, xN, tN, tend - tN, *args)
         solArray.append(xN)
-
+    
     return xN
     
 
 
-def solveODE(f, x0, tspan, method, deltaTmax, order):
+def solveODE(f, x0, tspan, method, deltaTmax, order, *args):
     """
     Solve ode using given method between range of T
     
-    Params 
+    Parameters
+    ----------
    
-    'f' :   
+    'f' :   Function 
+            ODE to be solved 
            
-    'x0' :  
+    'x0' :  Array
+            Inital x value to solve for
            
-    'tspan' :  
+    'tspan' :  Array
+                Time to be solved for
               
-    'method' : 
+    'method' : String
+               Describes which solver is to be used
         
-    'deltaTmax' : 
+    'deltaTmax' : Float
+                Maximum step
               
-    'order' : 
+    'order' : Boolean
+            True for 2nd order ODE False for 1st
 
     Returns
     -------
-
+    solArray: Array containg values for x or x and y
     """
 
 
@@ -143,43 +145,43 @@ def solveODE(f, x0, tspan, method, deltaTmax, order):
     solArray[0] = x0
  
     for i in range(len(tspan)-1):
-        solArray[i+1] = solveTo(f, ([tspan[i],tspan[i+1]]), solArray[i], deltaTmax, method)
+        solArray[i+1] = solveTo(f, ([tspan[i],tspan[i+1]]), solArray[i], deltaTmax, method, *args)
     
     return solArray
         
 def main():
     """
-    Example for solutions to first order ODE x' = x 
-    with inital conditions; x(0) = 1 
-    solving for t = 0 till t = 1
-    """
-    # f = ODE_functions.f
-    # fTrue = ODE_functions.fAnalytical
+    # Example for solutions to first order ODE x' = x 
+    # with inital conditions; x(0) = 1 
+    # solving from t = 0 till t = 1
+    # """
+    f = ODE_functions.f
+    fTrue = ODE_functions.fAnalytical
     tspan = np.linspace(0, 1, 100) 
     
-    # eulerSol = solveODE(f, 1, tspan, 'euler', 0.01, False)
-    # rk4Sol = solveODE(f, 1, tspan, 'rk4', 0.01, False)
-    # exactSol = fTrue(tspan)
+    eulerSol = solveODE(f, 1, tspan, 'euler', 0.01, False)
+    rk4Sol = solveODE(f, 1, tspan, 'rk4', 0.01, False)
+    exactSol = fTrue(tspan)
     
-    # rk4Error = [np.abs(exactSol[i] - rk4Sol[i]) for i in range(len(exactSol))]
-    # eulerError = [np.abs(exactSol[i] - eulerSol[i]) for i in range(len(exactSol))]
+    rk4Error = [np.abs(exactSol[i] - rk4Sol[i]) for i in range(len(exactSol))]
+    eulerError = [np.abs(exactSol[i] - eulerSol[i]) for i in range(len(exactSol))]
     
-    # plt.figure()
-    # f, axes = plt.subplots(1, 2)
-    # f.suptitle("Plots for 1st order ODE x' = x", fontsize=16)
-    # axes[0].plot(tspan,eulerSol,label='euler', marker='x', markersize=3)
-    # axes[0].plot(tspan,rk4Sol,label='rk4', marker='s', markersize=3)
-    # axes[0].plot(tspan,exactSol,label='exact', marker='o', markersize=3)
-    # axes[0].set_ylabel('dx/dt')
-    # axes[0].set_xlabel('Time')
-    # axes[0].legend()
+    plt.figure()
+    f, axes = plt.subplots(1, 2)
+    f.suptitle("Plots for 1st order ODE x' = x", fontsize=16)
+    axes[0].plot(tspan,eulerSol,label='euler', marker='x', markersize=3)
+    axes[0].plot(tspan,rk4Sol,label='rk4', marker='s', markersize=3)
+    axes[0].plot(tspan,exactSol,label='exact', marker='o', markersize=3)
+    axes[0].set_ylabel('dx/dt')
+    axes[0].set_xlabel('Time')
+    axes[0].legend()
     
     
-    # axes[1].loglog(tspan, eulerError, label = "euler error")
-    # axes[1].loglog(tspan, rk4Error, label = "rk4 error")
-    # axes[1].set_ylabel('Error')
-    # axes[1].set_xlabel('Time')
-    # axes[1].legend()
+    axes[1].loglog(tspan, eulerError, label = "euler error")
+    axes[1].loglog(tspan, rk4Error, label = "rk4 error")
+    axes[1].set_ylabel('Error')
+    axes[1].set_xlabel('Time')
+    axes[1].legend()
     
 
     
@@ -187,7 +189,7 @@ def main():
     Example for solutions to the 2nd order ODE,
     x'' = -x which is equivalent too,
     x' = y, y' = -x
-    solving for t = 0 to 1
+    solving from t = 0 to 1
     """
     
     g = ODE_functions.g
@@ -203,9 +205,6 @@ def main():
     
     exactSolx , exactSoly = gTrue(tspan)
 
-    # rk4Error = [np.abs(trueSol[i] - rk4Sol[i]) for i in range(len(trueSol))]
-    # eulerError = [np.abs(trueSol[i] - eulerSol[i]) for i in range(len(trueSol))]
-    
     
     plt.figure()
     f, axes = plt.subplots(2, 2)
