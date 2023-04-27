@@ -7,7 +7,7 @@ Created on Mon Apr 24 12:48:54 2023
 import numpy as np 
 
 
-def f(x,t):
+def f(t,x):
     """Function for ODE eqiuation dx/dt=x
     """
     return x
@@ -17,7 +17,7 @@ def fAnalytical(t):
     return x
 
 
-def g(V,t):
+def g(t,V):
     """ 
     Function for 2nd order ODE x'' = -x,
     reduced to a system of 1st order equations equivalent to,
@@ -38,7 +38,7 @@ def gAnalytical(t):
     return V
 
 
-def predatorPrey(V,t,*args):
+def predatorPrey(t,V,*args):
     args = args[0]
     a,b,d = args[0],args[1],args[2]
     x,y = V[0], V[1]

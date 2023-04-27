@@ -30,7 +30,7 @@ def eulerStep(f, x0, t0, h, *args):
     -------
     [xN, tN] : Array values for new step h  
     """
-    dxdt = f(x0, t0)
+    dxdt = f(t0, x0)
     xN = x0 + h * dxdt
     tN = t0 + h
     return xN, tN
@@ -52,11 +52,11 @@ def rk4Step(f, x0, t0, h, *args):
     -------
     [xN, tN] : Array of values for new step h  
     """  
-
-    k1 = np.array(f(x0, t0, *args))
-    k2 = np.array(f(x0 + h * (k1/2), t0 + (h/2), *args))
-    k3 = np.array(f(x0 + h * (k2/2), t0 + (h/2), *args))
-    k4 = np.array(f(x0 + h * k3, t0 + h, *args))
+   
+    k1 = np.array(f( t0, x0,  *args))
+    k2 = np.array(f( t0 + (h/2), x0 + h * (k1/2), *args))
+    k3 = np.array(f( t0 + (h/2), x0 + h * (k2/2), *args))
+    k4 = np.array(f( t0 + h, x0 + h * k3, *args))
     
     xN = x0 + ((k1 + 2*k2 + 2*k3 + k4)/6) * h
     tN = t0 + h
@@ -66,7 +66,6 @@ def rk4Step(f, x0, t0, h, *args):
 
 def solveTo(f, T, x0, h, method, *args):
 
-    
     """
     Solve ode using given method between range of T
     Parameters
@@ -140,10 +139,11 @@ def solveODE(f, x0, tspan, method, deltaTmax, order, *args):
 
     if order:
        solArray = np.empty(shape=(len(tspan), len(x0)))
+      
     else:
        solArray = np.empty(shape=(len(tspan), 1))
     solArray[0] = x0
- 
+
     for i in range(len(tspan)-1):
         solArray[i+1] = solveTo(f, ([tspan[i],tspan[i+1]]), solArray[i], deltaTmax, method, *args)
     

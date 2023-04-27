@@ -15,7 +15,7 @@ import matplotlib.cm as cm
 
 
 a = 1
-b = 0.11
+b = 0.4
 d = 0.1
 x0 = 1
 y0 = 1
@@ -118,3 +118,65 @@ plt.legend()
 plt.title("Badgers Vs Crows");
 
 #%%
+def main():
+    
+
+    # Set initial conditions and parameters
+    f = predatorPrey
+    a = 1
+    b = 0.2
+    d = 0.1
+    x0 = 0.1
+    y0 = 0.1
+    u0 =np.array([x0, y0])
+    t_span = (0, 100) # simulation time interval
+    t_eval = np.linspace(t_span[0], t_span[1], 1000) # time points to return solution
+    
+    
+    # Call solve_ivp to solve the ODE system
+    # sol = solve_ivp(fun=predaPrey, t_span=t_span, y0=u0, t_eval=t_eval, args=([a, b, d],))
+    
+    
+    solTest1 = solveODE(f, u0, t_eval, 'rk4', 0.01, True, [a,b==0.15,d])
+    solTest2 = solveODE(f, u0, t_eval, 'rk4', 0.01, True, [a,b==0.25,d])
+    solTest3 = solveODE(f, u0, t_eval, 'rk4', 0.01, True, [a,b==0.27,d])
+    solTest4 = solveODE(f, u0, t_eval, 'rk4', 0.01, True, [a,b==0.4,d])
+    print(solTest1)
+    print(solTest2)
+    # pc = phaseCondition(f, u0, [a,b,d])
+    
+    
+    
+    # axes[0].plot(t_eval,solTest1.T[0], label='x')
+    # axes[0].plot(t_eval,solTest1.T[1], label='y')
+    # axes[0].plot(t_eval,solTest2.T[0], label='x')
+    # axes[0].plot(t_eval,solTest2.T[1], label='y')
+    # axes[0].plot(t_eval,solTest3.T[0], label='x')
+    # axes[0].plot(t_eval,solTest3.T[1], label='y')
+    # axes[0].plot(t_eval,solTest4.T[0], label='x')
+    # axes[0].plot(t_eval,solTest4.T[1], label='y')
+    
+    # axes[0,1].plot(solTest1.T[0],solTest1.T[1])
+    # axes[0,1].plot(solTest2.T[0],solTest2.T[1])
+    # axes[0,1].plot(solTest3.T[0],solTest3.T[1])
+    # axes[0,1].plot(solTest4.T[0],solTest4.T[1])
+    # axes[0,1].plot.xlabel("Predator population")
+    # axes[0,1].plot.ylabel("Prey population")
+    # # plot.legend()
+    plot.show()
+    # plot.plot(sol.t, sol.y[0], label="x")
+    # plot.plot(sol.t, sol.y[1], label="y")
+    # plot.xlabel("Time")
+    # plot.ylabel("Population")
+   
+    
+    plt.plot(solTest1.T[0], solTest1.T[1])
+    # plt.plot(sol.y[0], sol.y[1])
+    plt.xlabel("Predator population")
+    plt.ylabel("Prey population")
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()
+    
