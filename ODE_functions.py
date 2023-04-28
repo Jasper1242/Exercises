@@ -39,12 +39,17 @@ def gAnalytical(t):
 
 
 def predatorPrey(t,V,*args):
-    args = args[0]
-    a,b,d = args[0],args[1],args[2]
+    # print("t",t,"V",V,"args",args)
+    # args = args[0]
+    # a,b,d = args[0],args[1],args[2]
+    a = 1
+    b = 0.2
+    d = 0.1
     x,y = V[0], V[1]
     xdash = x*(1-x) - (a*x*y)/(d+x)
     ydash = b*y*(1-(y/x))
     V = np.array([xdash,ydash])
+  
     return V
 
 

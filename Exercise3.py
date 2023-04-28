@@ -15,7 +15,7 @@ import matplotlib.cm as cm
 
 
 a = 1
-b = 0.4
+b = 0.2
 d = 0.1
 x0 = 1
 y0 = 1

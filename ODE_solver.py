@@ -52,7 +52,6 @@ def rk4Step(f, x0, t0, h, *args):
     -------
     [xN, tN] : Array of values for new step h  
     """  
-   
     k1 = np.array(f( t0, x0,  *args))
     k2 = np.array(f( t0 + (h/2), x0 + h * (k1/2), *args))
     k3 = np.array(f( t0 + (h/2), x0 + h * (k2/2), *args))
@@ -135,7 +134,8 @@ def solveODE(f, x0, tspan, method, deltaTmax, order, *args):
     -------
     solArray: Array containg values for x or x and y
     """
-
+    
+    
 
     if order:
        solArray = np.empty(shape=(len(tspan), len(x0)))
