@@ -8,28 +8,10 @@ Created on Wed Aug  2 11:20:28 2023
 from scipy.optimize import root
 import numpy as np
 import matplotlib.pyplot as plt
-from BVP import dirichletBC, finite_grid, constructMatrix
+from BVP import *
+from ODE_functions import BVP2_exact, BVP1_exact
 
-#init params
-N=50
-a=0
-b=1
-D=1
-gamma1 = 0
-gamma2 = 1
 
-# create a finite_dff grid with N+1 points
-grid = finite_grid(N, a=0, b=1)
-
-dx = grid[0]
-x_int = grid[1]
-x = grid[2]
-
-#Create b_DD matrix using a,b boundary conditions
-b_DD = dirichletBC(N, a=0, b=1)
-
-#Create A_DD matrix 
-a_DD = D * constructMatrix(N, D)
 
 # python function for source term
 
@@ -37,26 +19,62 @@ def q(x):
     return np.ones(np.size(x))
 
 
-#solve BVP
-# def BVP_solver()
-u = np.linalg.solve(a_DD, -D * b_DD - (dx**2 * q(x_int)))
 
-def u_exact(x,a,b,alpha,beta, D, integer):
+def BVP(N,a,b,gamma1,gamma2,D,source):
+    #create finite diff grid with N+1 points
+    grid = finite_grid(N, a, b)
+    dx = grid[0]
+    x_int = grid[1]
+    x = grid[2]
     
-    answer = (-integer)/(2*D)*((x-a)*(x-b)) + ((beta-alpha)/(b-a))*(x-a)+alpha
-    print(answer)
-    return np.array(answer)
-u_exact2 = u_exact(x_int, a=0, b=1, alpha=0, beta=0, D=1, integer=1)
-# u_exact = -(1/(2*D))*(x-a)*(a-b)+((gamma2-gamma1)/(b-a))*(x-a)+gamma1
+    #Create A matrix 
+    A_DD = construct_A_matrix(N, D)
+    
+    #Contruct b vector
+    b_DD = -construct_b_vector(N, a, b)
+    
+    #Call solver
+    u_sol = solver(N,A_DD,b_DD,dx,x_int,source)
+    
+    return u_sol, x_int
 
-#plot to compare
+def solver(N,A_DD,b_DD,dx,x_int,source):
+    
+    u = np.linalg.solve(A_DD,b_DD)
+    return u
+    
+    
+    
 
-plt.plot(x_int, u, 'o', label='numerical')
-plt.plot(x_int, u_exact2, 'k', label ='exact')
-plt.xlabel(f'$x$')
-plt.ylabel(f'$u(x)$')
-plt.legend()
-plt.show()
+
+def main():
+    u_sol, x_int = BVP(N=50, a=0, b=1, gamma1=0, gamma2=1, D=1, source=False)
+    u_true = BVP1_exact(x_int, a=0, b=1, gamma1=0, gamma2=1)
+
+    #plot to compare
+    plt.plot(x_int, u_sol, 'o', label='numerical')
+    plt.plot(x_int, u_true, 'k', label ='exact')
+    plt.xlabel(f'$x$')
+    plt.ylabel(f'$u(x)$')
+    plt.legend()
+    plt.show()
+    
+    u_sol2, x_int2 = BVP(N=50, a=0, b=1, gamma1=0, gamma2=1, D=1, source=False)
+    u_true2 = BVP2_exact(x_int, a=0, b=1, gamma1=0, gamma2=1)
+    
+if __name__ == "__main__":
+    main()
+ 
+
+
+
+
+
+
+
+
+
+
 
 
 # "Problem Params"

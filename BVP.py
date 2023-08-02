@@ -15,21 +15,37 @@ def finite_grid(N, a, b):
     return dx, x_int, x
 
 
-def dirichletBC(N, a, b):
+def construct_b_vector(N, a, b):
+    """Takes boundary conditions a and b and constructs a N-1 lenght vector,
+    where a represents the first boundary and b the last
+    
+    Params
+    ------
+    'N': Int
+    
+    'a': Int
+    
+    'b': Int
+    
+    Returns
+    -------
+    'V': np.ndarray
+    """
     V = np.zeros((N-1),)
     V[0] = a
     V[-1] = b
     return V
 
-def constructMatrix(N,D):
+def construct_A_matrix(N,D):
 
     #Initialise empty matrix
-    A_D = np.zeros(((N-1),(N-1)))
-    #Fill diagonal with -2
-    np.fill_diagonal(A_D, -2)
-    #Set off diagonal equal to 1
+    M = np.zeros(((N-1),(N-1)))
+    #Fill diagonal elements with -2
+    np.fill_diagonal(M, -2)
+    #Set off diagonal elements to 1
     for i in range((N-1)):
         for j in range((N-1)):
             if i == j-1 or i==j+1:
-                A_D[i][j]= 1
-    return A_D*D
+                M[i][j]= 1
+    return M
+

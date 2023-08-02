@@ -94,6 +94,13 @@ def hopfExplicit(t, theta, b):
     u2 = np.sqrt(b) * np.sin(t + theta)
     return np.array([u1, u2])
 
+def BVP1_exact(x,a,b,gamma1,gamma2):
+    exactSol = ((gamma2-gamma1)/(b-a))*(x-a)+gamma1
+    return np.array(exactSol)
+
+def BVP2_exact(x,a,b,gamma1,gamma2, D):
+    exactSol = (-1)/(2*D)*((x-a)*(x-b)) + ((gamma2-gamma1)/(b-a))*(x-a)+gamma1
+    return np.array(exactSol)
 
 def cubic(x, *args):
     c = args[0]
