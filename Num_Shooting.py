@@ -70,12 +70,14 @@ def plotToCompare(f, U, *args):
     evals = np.linspace(0,100,1000)
     integ_solve = solve_ivp(f, (0,100), u0, method='RK45', t_eval=evals)
     
-    f, axes = plt.subplots(2, 2)
+    f, axes = plt.subplots(2)
     
-    axes[0,0].plot(integ_solve.y[0],integ_solve.y[1])
+    axes[0].plot(integ_solve.y[0],integ_solve.y[1])
+    axes[0].set_title("Phase portrait")
     
-    axes[1,0].plot(evals,integ_solve.y[0],label="x")
-    axes[1,0].plot(evals,integ_solve.y[1],label="y")
+    axes[1].plot(evals,integ_solve.y[0],label="Prey")
+    axes[1].plot(evals,integ_solve.y[1],label="Predator")
+    axes[1].set_title("Pred vs Prey")
     plt.legend()
     plt.show()
     
@@ -87,6 +89,7 @@ def main():
     u0 = [1,1,10]
     params = [0.1,0.2,1]
 
+    
     plotToCompare(f,u0, params)
     result = rootFinding(f, u0, params).x # Print the result
     print("Initial conditions for the limit cycle: x0 = {}, y0 = {}".format(round(result[0],4), round(result[1],4)))
