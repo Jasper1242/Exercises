@@ -69,10 +69,13 @@ def plotToCompare(f, U, *args):
     solve_ivp
     evals = np.linspace(0,100,1000)
     integ_solve = solve_ivp(f, (0,100), u0, method='RK45', t_eval=evals)
-    plt.plot(integ_solve.y[0],integ_solve.y[1])
     
-    # plt.plot(evals,integ_solve.y[0],label="x")
-    # plt.plot(evals,integ_solve.y[1],label="y")
+    f, axes = plt.subplots(2, 2)
+    
+    axes[0,0].plot(integ_solve.y[0],integ_solve.y[1])
+    
+    axes[1,0].plot(evals,integ_solve.y[0],label="x")
+    axes[1,0].plot(evals,integ_solve.y[1],label="y")
     plt.legend()
     plt.show()
     
@@ -84,7 +87,7 @@ def main():
     u0 = [1,1,10]
     params = [0.1,0.2,1]
 
-    # plotToCompare(f,u0, params)
+    plotToCompare(f,u0, params)
     result = rootFinding(f, u0, params).x # Print the result
     print("Initial conditions for the limit cycle: x0 = {}, y0 = {}".format(round(result[0],4), round(result[1],4)))
     print("Period of the limit cycle: T = {}".format(round(result[2],2)))
